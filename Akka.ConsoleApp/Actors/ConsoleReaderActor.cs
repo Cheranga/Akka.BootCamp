@@ -6,11 +6,11 @@ namespace Akka.ConsoleApp.Actors
 {
     public class ConsoleReaderActor : UntypedActor
     {
-        private readonly IActorRef _consoleWriterActor;
+        private readonly IActorRef _validationActor;
 
-        public ConsoleReaderActor(IActorRef consoleWriterActor)
+        public ConsoleReaderActor(IActorRef validationActor)
         {
-            _consoleWriterActor = consoleWriterActor;
+            _validationActor = validationActor;
         }
 
         protected override void OnReceive(object message)
@@ -28,25 +28,7 @@ namespace Akka.ConsoleApp.Actors
                 return;
             }
 
-            if (string.IsNullOrEmpty(input))
-            {
-                var message = new NullInputMessage();
-                _consoleWriterActor.Tell(message);
-            }
-            else
-            {
-                var isValid = input.Length % 2 == 0;
-                if (isValid)
-                {
-                    _consoleWriterActor.Tell(new ValidInputMessage($"{input} is valid!"));
-                }
-                else
-                {
-                    _consoleWriterActor.Tell(new InvalidInputMessage($"{input} is invalid!"));
-                }
-            }
-
-            Self.Tell(new ContinueProcessingMessage());
+            _validationActor.Tell(input);
         }
     }
 }
