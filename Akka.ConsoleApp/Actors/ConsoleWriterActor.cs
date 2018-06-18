@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.ConsoleApp.Messages;
 
 namespace Akka.ConsoleApp.Actors
 {
@@ -12,7 +13,14 @@ namespace Akka.ConsoleApp.Actors
 
         private void HandleMessage(object message)
         {
-            Console.WriteLine(message);
+            if (message is InvalidInputMessage)
+            {
+                Console.WriteLine((message as InvalidInputMessage).Reason);
+            }
+            else if(message is ValidInputMessage)
+            {
+                Console.WriteLine((message as ValidInputMessage).Reason);
+            }
         }
     }
 }

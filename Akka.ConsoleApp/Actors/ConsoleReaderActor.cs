@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.ConsoleApp.Messages;
 
 namespace Akka.ConsoleApp.Actors
 {
@@ -29,15 +30,23 @@ namespace Akka.ConsoleApp.Actors
 
             if (string.IsNullOrEmpty(input))
             {
-                _consoleWriterActor.Tell("Invalid input...");
+                var message = new NullInputMessage();
+                _consoleWriterActor.Tell(message);
             }
             else
             {
                 var isValid = input.Length % 2 == 0;
-                _consoleWriterActor.Tell(isValid? "Valid!" : "Invalid!");
+                if (isValid)
+                {
+                    _consoleWriterActor.Tell(new ValidInputMessage($"{input} is valid!"));
+                }
+                else
+                {
+                    _consoleWriterActor.Tell(new InvalidInputMessage($"{input} is invalid!"));
+                }
             }
 
-            Self.Tell("continue...");
+            Self.Tell(new ContinueProcessingMessage());
         }
     }
 }

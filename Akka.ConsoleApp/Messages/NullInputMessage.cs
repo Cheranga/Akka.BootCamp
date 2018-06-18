@@ -2,7 +2,7 @@
 {
     public class NullInputMessage : InputErrorMessage
     {
-        public NullInputMessage(string reason) : base(reason)
+        public NullInputMessage() : base("Input cannot be empty")
         {
         }
     }
