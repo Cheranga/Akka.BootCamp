@@ -2,7 +2,6 @@
 using Akka.Actor;
 using Akka.ConsoleApp.Messages;
 using Akka.ConsoleApp.Utils;
-using Akka.Util;
 
 namespace Akka.ConsoleApp.Actors
 {
@@ -11,24 +10,13 @@ namespace Akka.ConsoleApp.Actors
         private readonly string _filePath;
         private readonly IActorRef _reporterActor;
         private FileOberserver _fileObserver;
-        private Stream _stream;
         private StreamReader _reader;
+        private Stream _stream;
 
         public TailActor(string filePath, IActorRef reporterActor)
         {
             _filePath = filePath;
             _reporterActor = reporterActor;
-
-
-            _fileObserver = new FileOberserver(_filePath, Self);
-            _fileObserver.Start();
-
-            _stream = new FileStream(_filePath, FileMode.Open,FileAccess.Read, FileShare.ReadWrite);
-            _reader = new StreamReader(_stream);
-
-            var fileContent = _reader.ReadToEnd();
-            var message = new InitialReadMessage(_filePath, fileContent);
-            Self.Tell(message);
         }
 
         protected override void OnReceive(object message)
@@ -52,8 +40,35 @@ namespace Akka.ConsoleApp.Actors
             }
             else if (message is InitialReadMessage)
             {
-                _reporterActor.Tell(((InitialReadMessage)message).Text);
+                _reporterActor.Tell(((InitialReadMessage) message).Text);
             }
+        }
+
+        protected override void PreStart()
+        {
+            _fileObserver = new FileOberserver(_filePath, Self);
+            _fileObserver.Start();
+
+            _stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            _reader = new StreamReader(_stream);
+
+            var fileContent = _reader.ReadToEnd();
+            var message = new InitialReadMessage(_filePath, fileContent);
+            Self.Tell(message);
+        }
+
+        protected override void PostStop()
+        {
+            _fileObserver.Dispose();
+            _fileObserver = null;
+
+            _reader.Close();
+            _reader.Dispose();
+
+            _stream.Close();
+            _stream.Dispose();
+
+            base.PostStop();
         }
     }
 }
