@@ -58,6 +58,11 @@
   <ItemGroup>
     <Compile Include="Actors\ConsoleReaderActor.cs" />
     <Compile Include="Actors\ConsoleWriterActor.cs" />
+    <Compile Include="Messages\ContinueProcessingMessage.cs" />
+    <Compile Include="Messages\InputErrorMessage.cs" />
+    <Compile Include="Messages\InvalidInputMessage.cs" />
+    <Compile Include="Messages\NullInputMessage.cs" />
+    <Compile Include="Messages\ValidInputMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -65,9 +70,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Messages\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

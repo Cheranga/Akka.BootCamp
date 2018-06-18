@@ -27,7 +27,15 @@ namespace Akka.ConsoleApp.Actors
                 return;
             }
 
-            _consoleWriterActor.Tell(input);
+            if (string.IsNullOrEmpty(input))
+            {
+                _consoleWriterActor.Tell("Invalid input...");
+            }
+            else
+            {
+                var isValid = input.Length % 2 == 0;
+                _consoleWriterActor.Tell(isValid? "Valid!" : "Invalid!");
+            }
 
             Self.Tell("continue...");
         }
