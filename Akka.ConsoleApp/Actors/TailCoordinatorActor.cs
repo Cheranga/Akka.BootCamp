@@ -1,4 +1,5 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
 using Akka.ConsoleApp.Messages;
 
 namespace Akka.ConsoleApp.Actors
@@ -17,6 +18,27 @@ namespace Akka.ConsoleApp.Actors
                 var msg = message as StartTailMessage;
                 Context.ActorOf(Props.Create(() => new TailActor(msg.FilePath, msg.ReporterActor)));
             }
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                10,
+                30000,
+                exception =>
+                {
+                    if (exception is ArithmeticException)
+                    {
+                        return Directive.Resume;
+                    }
+
+                    if (exception is NotSupportedException)
+                    {
+                        return Directive.Stop;
+                    }
+
+                    return Directive.Restart;
+                });
         }
     }
 }
