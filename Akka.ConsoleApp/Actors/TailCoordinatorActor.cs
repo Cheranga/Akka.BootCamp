@@ -14,7 +14,8 @@ namespace Akka.ConsoleApp.Actors
         {
             if (message is StartTailMessage)
             {
-
+                var msg = message as StartTailMessage;
+                Context.ActorOf(Props.Create(() => new TailActor(msg.FilePath, msg.ReporterActor)));
             }
         }
     }

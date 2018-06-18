@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Actors\ConsoleReaderActor.cs" />
     <Compile Include="Actors\ConsoleWriterActor.cs" />
+    <Compile Include="Actors\FileValidatorActor.cs" />
     <Compile Include="Actors\TailActor.cs" />
     <Compile Include="Actors\TailCoordinatorActor.cs" />
     <Compile Include="Actors\ValidationActor.cs" />
