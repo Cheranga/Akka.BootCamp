@@ -7,12 +7,10 @@ namespace Akka.ConsoleApp.Actors
 {
     public class FileValidatorActor : UntypedActor
     {
-        private readonly IActorRef _tailCoordinator;
         private readonly IActorRef _consoleWriter;
 
-        public FileValidatorActor(IActorRef tailCoordinator, IActorRef consoleWriter)
+        public FileValidatorActor(IActorRef consoleWriter)
         {
-            _tailCoordinator = tailCoordinator;
             _consoleWriter = consoleWriter;
         }
 
@@ -37,7 +35,11 @@ namespace Akka.ConsoleApp.Actors
                 if (isValid)
                 {
                     _consoleWriter.Tell(new ValidInputMessage($"Starting processing for: {msg}"));
-                    _tailCoordinator.Tell(new StartTailMessage(msg, _consoleWriter));
+                    //
+                    // Use actor selection to get the tail coordinator actor
+                    //
+                    var tailCoordinator = Context.ActorSelection("akka://MyActorSystem/user/TailCoordinatorActor");
+                    tailCoordinator.Tell(new StartTailMessage(msg, _consoleWriter));
                 }
                 else
                 {
