@@ -6,13 +6,6 @@ namespace Akka.ConsoleApp.Actors
 {
     public class ConsoleReaderActor : UntypedActor
     {
-        private readonly IActorRef _validationActor;
-
-        public ConsoleReaderActor(IActorRef validationActor)
-        {
-            _validationActor = validationActor;
-        }
-
         protected override void OnReceive(object message)
         {
             HandleMessage();
@@ -28,7 +21,11 @@ namespace Akka.ConsoleApp.Actors
                 return;
             }
 
-            _validationActor.Tell(input);
+            //
+            // Get the validation actor using actor selection
+            //
+            var validatorActor = Context.ActorSelection("akka://MyActorSystem/user/FileValidatorActor");
+            validatorActor.Tell(input);
         }
     }
 }
