@@ -49,5 +49,20 @@ namespace SystemCharting
             var message = new AddSeriesMessage(series);
             _chartActor.Tell(message);
         }
+
+        private void btnCpu_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnMemory_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDisk_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
