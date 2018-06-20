@@ -1,26 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
+using SystemCharting.Messages;
 using Akka.Actor;
 
 namespace SystemCharting.Actors
 {
-    public class ChartingActor : UntypedActor
+    public class ChartingActor : ReceiveActor
     {
-        #region Messages
-
-        public class InitializeChart
-        {
-            public InitializeChart(Dictionary<string, Series> initialSeries)
-            {
-                InitialSeries = initialSeries;
-            }
-
-            public Dictionary<string, Series> InitialSeries { get; private set; }
-        }
-
-        #endregion
-
         private readonly Chart _chart;
         private Dictionary<string, Series> _seriesIndex;
 
@@ -32,20 +19,24 @@ namespace SystemCharting.Actors
         {
             _chart = chart;
             _seriesIndex = seriesIndex;
-        }
 
-        protected override void OnReceive(object message)
-        {
-            if (message is InitializeChart)
-            {
-                var ic = message as InitializeChart;
-                HandleInitialize(ic);
-            }
+            Receive<InitializeChartMessage>(message => HandleInitialize(message));
+            Receive<AddSeriesMessage>(message => HandleAddSeriesMessages(message));
         }
 
         #region Individual Message Type Handlers
 
-        private void HandleInitialize(InitializeChart ic)
+        private void HandleAddSeriesMessages(AddSeriesMessage message)
+        {
+            var seriesName = message.Series.Name;
+            if (!string.IsNullOrEmpty(seriesName) && !_seriesIndex.ContainsKey(seriesName))
+            {
+                _seriesIndex.Add(seriesName, message.Series);
+                _chart.Series.Add(message.Series);
+            }
+        }
+
+        private void HandleInitialize(InitializeChartMessage ic)
         {
             if (ic.InitialSeries != null)
             {
