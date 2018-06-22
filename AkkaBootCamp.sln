@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit1", "Unit1", "{9CED06A8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.ConsoleApp", "Akka.ConsoleApp\Akka.ConsoleApp.csproj", "{BADA132F-2391-4215-A265-B05449AE4291}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit2", "Unit2", "{AF292630-B84B-474C-BA47-6794FEC78E04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemCharting", "SystemCharting\SystemCharting.csproj", "{8EC959AD-B22E-433B-B64A-A47CF35C5862}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,11 +21,16 @@ Global
 		{BADA132F-2391-4215-A265-B05449AE4291}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BADA132F-2391-4215-A265-B05449AE4291}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BADA132F-2391-4215-A265-B05449AE4291}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC959AD-B22E-433B-B64A-A47CF35C5862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC959AD-B22E-433B-B64A-A47CF35C5862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC959AD-B22E-433B-B64A-A47CF35C5862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC959AD-B22E-433B-B64A-A47CF35C5862}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BADA132F-2391-4215-A265-B05449AE4291} = {9CED06A8-D0D1-469C-B771-391ECDE7C01C}
+		{8EC959AD-B22E-433B-B64A-A47CF35C5862} = {AF292630-B84B-474C-BA47-6794FEC78E04}
 	EndGlobalSection
 EndGlobal

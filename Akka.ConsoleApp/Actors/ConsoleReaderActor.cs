@@ -6,13 +6,6 @@ namespace Akka.ConsoleApp.Actors
 {
     public class ConsoleReaderActor : UntypedActor
     {
-        private readonly IActorRef _consoleWriterActor;
-
-        public ConsoleReaderActor(IActorRef consoleWriterActor)
-        {
-            _consoleWriterActor = consoleWriterActor;
-        }
-
         protected override void OnReceive(object message)
         {
             HandleMessage();
@@ -28,25 +21,11 @@ namespace Akka.ConsoleApp.Actors
                 return;
             }
 
-            if (string.IsNullOrEmpty(input))
-            {
-                var message = new NullInputMessage();
-                _consoleWriterActor.Tell(message);
-            }
-            else
-            {
-                var isValid = input.Length % 2 == 0;
-                if (isValid)
-                {
-                    _consoleWriterActor.Tell(new ValidInputMessage($"{input} is valid!"));
-                }
-                else
-                {
-                    _consoleWriterActor.Tell(new InvalidInputMessage($"{input} is invalid!"));
-                }
-            }
-
-            Self.Tell(new ContinueProcessingMessage());
+            //
+            // Get the validation actor using actor selection
+            //
+            var validatorActor = Context.ActorSelection("akka://MyActorSystem/user/FileValidatorActor");
+            validatorActor.Tell(input);
         }
     }
 }

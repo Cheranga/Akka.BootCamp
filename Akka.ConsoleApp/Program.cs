@@ -10,7 +10,10 @@ namespace Akka.ConsoleApp
             var actorSystem = ActorSystem.Create("MyActorSystem");
 
             var consoleWriterActor = actorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()), "ConsoleWriterActor");
-            var consoleReaderActor = actorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)), "ConsoleReaderActor");
+            //var validationActor = actorSystem.ActorOf(Props.Create(() => new ValidationActor(consoleWriterActor)), "ValidationActor");
+            var tailCoordinatorActor = actorSystem.ActorOf(Props.Create(()=>new TailCoordinatorActor()), "TailCoordinatorActor");
+            var fileValidationActor = actorSystem.ActorOf(Props.Create(() => new FileValidatorActor(consoleWriterActor)), "FileValidatorActor");
+            var consoleReaderActor = actorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor()), "ConsoleReaderActor");
 
             consoleReaderActor.Tell("start");
 
