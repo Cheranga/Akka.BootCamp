@@ -16,9 +16,9 @@ namespace SystemCharting.Actors
         private readonly IDictionary<CounterType, Func<PerformanceCounter>> _counterGenerators =
             new Dictionary<CounterType, Func<PerformanceCounter>>
             {
-                {CounterType.Cpu, () => new PerformanceCounter("Processor", "% Processor Time", true)},
-                {CounterType.Memory, () => new PerformanceCounter("Memory", "% Commited Bytes In Use", true)},
-                {CounterType.Disk, () => new PerformanceCounter("Logical Disk", "% Disk Time", true)}
+                {CounterType.Cpu, () => new PerformanceCounter("Processor", "% Processor Time", "_Total", true)},
+                {CounterType.Memory, () => new PerformanceCounter("Memory", "% Committed Bytes In Use", true)},
+                {CounterType.Disk, () => new PerformanceCounter("LogicalDisk", "% Disk Time", "_Total", true)}
             };
 
         private IDictionary<CounterType, Func<Series>> _counterSeries = new Dictionary<CounterType, Func<Series>>
@@ -47,6 +47,11 @@ namespace SystemCharting.Actors
                     }
             }
         };
+
+        public PerformanceCounterCoordinatorActor(IActorRef chartingActor) : this(chartingActor, new Dictionary<CounterType, IActorRef>())
+        {
+
+        }
 
         public PerformanceCounterCoordinatorActor(IActorRef chartingActor, Dictionary<CounterType, IActorRef> counterActors)
         {
@@ -82,7 +87,7 @@ namespace SystemCharting.Actors
 
             _chartingActor.Tell(new AddSeriesMessage(_counterSeries[message.CounterType]()));
 
-            _counterActors[message.CounterType].Tell(new SubscribeCounterMessage(message.CounterType,_chartingActor));
+            _counterActors[message.CounterType].Tell(new SubscribeCounterMessage(message.CounterType, _chartingActor));
         }
     }
 }
