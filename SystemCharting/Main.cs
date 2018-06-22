@@ -29,7 +29,7 @@ namespace SystemCharting
         private void Main_Load(object sender, EventArgs e)
         {
             _chartActor = Program.ChartActors.ActorOf(Props.Create(() =>
-                new ChartingActor(sysChart)), "charting");
+                new ChartingActor(sysChart, btnPause)), "charting");
             _chartActor.Tell(new InitializeChartMessage(null)); //no initial series
 
             _coordinatorActor = Program.ChartActors.ActorOf(Props.Create(() =>
@@ -37,8 +37,7 @@ namespace SystemCharting
 
             // CPU button toggle actor
             _toggleActors[CounterType.Cpu] = Program.ChartActors.ActorOf(
-                Props.Create(() => new ButtonToggleActor(_coordinatorActor, btnCpu,
-                        CounterType.Cpu, false))
+                Props.Create(() => new ButtonToggleActor(_coordinatorActor, btnCpu, CounterType.Cpu, false))
                     .WithDispatcher("akka.actor.synchronized-dispatcher"));
 
             // MEMORY button toggle actor
@@ -88,6 +87,11 @@ namespace SystemCharting
         private void btnDisk_Click(object sender, EventArgs e)
         {
             _toggleActors[CounterType.Disk].Tell(new ToggleMessage());
+        }
+
+        private void btnPause_Click(object sender, EventArgs e)
+        {
+            _chartActor.Tell(new TogglePauseMessage());
         }
     }
 }

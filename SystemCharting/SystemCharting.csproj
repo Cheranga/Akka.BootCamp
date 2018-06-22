@@ -79,6 +79,7 @@
     <Compile Include="Messages\RemoveSeriesMessage.cs" />
     <Compile Include="Messages\SubscribeCounterMessage.cs" />
     <Compile Include="Messages\ToggleMessage.cs" />
+    <Compile Include="Messages\TogglePauseMessage.cs" />
     <Compile Include="Messages\UnsubscribeCounterMessage.cs" />
     <Compile Include="Messages\WatchMessge.cs" />
     <Compile Include="Program.cs" />

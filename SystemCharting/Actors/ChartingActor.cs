@@ -1,33 +1,88 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using SystemCharting.Messages;
 using Akka.Actor;
 
 namespace SystemCharting.Actors
 {
-    public class ChartingActor : ReceiveActor
+    public class ChartingActor : ReceiveActor, IWithUnboundedStash
     {
         public const int MaxPoints = 250;
         private int xPosCounter = 0;
 
         private readonly Chart _chart;
+        private readonly Button _pauseButton;
         private Dictionary<string, Series> _seriesIndex;
 
-        public ChartingActor(Chart chart) : this(chart, new Dictionary<string, Series>())
+        public ChartingActor(Chart chart, Button pauseButton) : this(chart, new Dictionary<string, Series>(), pauseButton)
         {
         }
 
-        public ChartingActor(Chart chart, Dictionary<string, Series> seriesIndex)
+        public ChartingActor(Chart chart, Dictionary<string, Series> seriesIndex, Button pauseButton)
         {
             _chart = chart;
             _seriesIndex = seriesIndex;
+            _pauseButton = pauseButton;
 
+            Receiving();
+        }
+
+        private void Receiving()
+        {
             Receive<InitializeChartMessage>(message => HandleInitialize(message));
             Receive<AddSeriesMessage>(message => HandleAddSeries(message));
             Receive<RemoveSeriesMessage>(removeSeries => HandleRemoveSeries(removeSeries));
             Receive<MetricMessage>(metric => HandleMetrics(metric));
+
+            Receive<TogglePauseMessage>(message =>
+            {
+                SetPauseButtonText(true);
+                BecomeStacked(Paused);
+            });
+        }
+
+        private void SetPauseButtonText(bool paused)
+        {
+            _pauseButton.Text = $"{(paused ? "Play |>" : "Pause ||")}";
+        }
+
+        private void Paused()
+        {
+            Receive<AddSeriesMessage>(messge => Stash.Stash());
+            Receive<RemoveSeriesMessage>(message => Stash.Stash());
+            Receive<MetricMessage>(message => HandleMetricsPaused(message));
+
+            Receive<TogglePauseMessage>(message =>
+            {
+                SetPauseButtonText(false);
+                UnbecomeStacked();
+                
+                Stash.UnstashAll();
+            });
+        }
+
+        private void HandleMetricsPaused(MetricMessage message)
+        {
+            if (!string.IsNullOrEmpty(message.Series) && _seriesIndex.ContainsKey(message.Series))
+            {
+                var series = _seriesIndex[message.Series];
+                if (series.Points == null)
+                {
+                    return; // means we're shutting down
+                }
+                series.Points.AddXY(xPosCounter++, 0.0d); //set the Y value to zero when we're paused
+
+                while (series.Points.Count > MaxPoints)
+                {
+                    series.Points.RemoveAt(0);
+                }
+
+                SetChartBoundaries();
+            }
         }
 
         private void SetChartBoundaries()
@@ -119,5 +174,7 @@ namespace SystemCharting.Actors
         }
 
         #endregion
+
+        public IStash Stash { get; set; }
     }
 }
